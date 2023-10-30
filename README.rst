@@ -5,6 +5,9 @@ This application implements a temperature sensor using the `Texas Instruments TM
 the `Maxim DS18B20 <https://www.analog.com/en/products/ds18b20.html>`_ temperature sensors.
 It advertises in the `BTHome <https://bthome.io>`_ format.
 
+The sensor is configured to advertise every 1 seconds, and to send a notification with the current temperature.
+The default sensor is the TMP112, but it can be changed to the DS18B20 by setting the `CONFIG_SENSOR_DS18B20` Kconfig option.
+
 Requirements
 ************
 

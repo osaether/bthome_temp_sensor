@@ -11,12 +11,10 @@ menu "BTHome temperature sensor type"
 
 	config SENSOR_TMP112
 		bool "Texas Instruments TMP112"
-		SENSOR_DEVICE_NAME="ti_tmp112"
 		select I2C
 
 	config SENSOR_DS18B20
 		bool "Maxim DS18B20"
-		SENSOR_DEVICE_NAME="maxim_ds18b20"
 		select W1
 
 	endchoice

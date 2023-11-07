@@ -9,6 +9,13 @@
 #include <zephyr/drivers/sensor.h>
 #include "temp_sensor.h"
 
+#if CONFIG_SENSOR_DS18B20
+#define SENSOR_DEVICE_NAME maxim_ds18b20
+#else
+#define SENSOR_DEVICE_NAME ti_tmp112
+#endif
+ 
+
 #define THREAD_STACKSIZE        1024
 #define THREAD_PRIORITY         7
 
@@ -52,7 +59,7 @@ static void thread_entry(void *p1, void *p2, void *p3)
 
 void temp_init(void)
 {
-	const struct device *dev = DEVICE_DT_GET_ANY(CONFIG_SENSOR_DEVICE_NAME);
+	const struct device *dev = DEVICE_DT_GET_ANY(SENSOR_DEVICE_NAME);
 
 	__ASSERT(dev != NULL, "Failed to get device binding");
 	__ASSERT(device_is_ready(dev), "Device %s is not ready", dev->name);

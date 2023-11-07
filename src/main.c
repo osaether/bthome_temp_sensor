@@ -71,7 +71,7 @@ int main(void)
 	int err;
 	static int32_t temperature;
 
-	printk("Starting BTHome TMP112\n");
+	printk("Starting BTHome temp sensor\n");
 
 	err = init();
 	if (err != 0) {

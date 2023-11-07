@@ -6,7 +6,7 @@ the `Maxim DS18B20 <https://www.analog.com/en/products/ds18b20.html>`_ temperatu
 It advertises in the `BTHome <https://bthome.io>`_ format.
 
 The sensor is configured to advertise every 1 seconds, and to send a notification with the current temperature.
-The default sensor is the TMP112, but it can be changed to the DS18B20 by setting the `CONFIG_SENSOR_DS18B20` Kconfig option.
+The default sensor is the TMP112, but it can be changed to the DS18B20 by selecting the `CONFIG_SENSOR_DS18B20` Kconfig option.
 
 Requirements
 ************
@@ -24,8 +24,8 @@ Building
 You need the `nRF Connect SDK <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html>`_ to build this sample.
 
 Clone this repo under the samples folder in the nRF Connect SDK.
-To build for the nRF52840 DK run the west build command:
+To build for the nRF52840 DK and the DS18B20 sensor run this west build command:
 
 .. code-block:: console
   
-   west build -b nrf52840dk_nrf52840
+   west build -b nrf52840dk_nrf52840 -- -DCONFIG_SENSOR_DS18B20=y

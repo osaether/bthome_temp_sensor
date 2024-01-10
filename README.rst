@@ -29,3 +29,9 @@ To build for the nRF52840 DK and the DS18B20 sensor run this west build command:
 .. code-block:: console
   
    west build -b nrf52840dk_nrf52840 -- -DCONFIG_SENSOR_DS18B20=y
+
+and to build for the nRF52840 DK and the TMP112 sensor run this west build command:
+
+.. code-block:: console
+  
+   west build -b nrf52840dk_nrf52840 -- -DCONFIG_SENSOR_TMP112=y

@@ -20,7 +20,7 @@ Requirements
 Note on the nRF54l15-DK
 ***********************
 
-Use the 'Board configurator <https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html>' and disable VCOM0 and set VDD to 3.3V before flashing this firmare.
+Use the `Board configurator <https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html>`_ and disable VCOM0 and set VDD to 3.3V before flashing this firmare.
 
 Building
 ********

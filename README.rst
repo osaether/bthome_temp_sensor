@@ -17,6 +17,10 @@ Requirements
   the `Zephyr Project <https://github.com/zephyrproject-rtos/zephyr>`_
 * A BTHome compatible listener, for example `Home Assistant <https://www.home-assistant.io/>`_ with the BTHome integration running.
 
+Note on the nRF54l15-DK
+***********************
+
+Use the 'Board configurator <https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html>' and disable VCOM0 and set VDD to 3.3V before flashing this firmare.
 
 Building
 ********

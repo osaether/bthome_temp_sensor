@@ -17,7 +17,7 @@ Requirements
   the `Zephyr Project <https://github.com/zephyrproject-rtos/zephyr>`_
 * A BTHome compatible listener, for example `Home Assistant <https://www.home-assistant.io/>`_ with the BTHome integration running.
 
-Note on the nRF54l15-DK
+Note on the nRF54L15-DK
 ***********************
 
 Use the `Board configurator <https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html>`_ and disable VCOM0 and set VDD to 3.3V before flashing this firmare.
@@ -40,7 +40,7 @@ and to build for the nRF52840 DK and the TMP112 sensor run this west build comma
   
    west build -b nrf52840dk/nrf52840 -- -DCONFIG_SENSOR_TMP112=y
 
-To build for the nRF54l15 DK and the DS18B20 sensor run this west build command:
+To build for the nRF54L15 DK and the DS18B20 sensor run this west build command:
 
 .. code-block:: console
   

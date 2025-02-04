@@ -10,10 +10,6 @@
 
 #include "temp_sensor.h"
 
-#if CONFIG_SOC_NRF54L15 && CONFIG_SENSOR_TMP112
-	#error TMP112 is not supportet on NRF54L15 for this project yet
-#endif
-
 #define BTHOME_SERVICE_UUID     0xfcd2  /* BTHome service UUID */
 #define SERVICE_DATA_LEN        7
 #define IDX_TEMPL               4       /* Index of lo byte of temp in service data */

@@ -12,7 +12,7 @@ Requirements
 ************
 
 * A board with one of these sensors built in to its devicetree, or a devicetree overlay with such a node added.
-  An overlay file for the nRF52840DK is provided in the boards folder.
+  Overlay files for the nRF52840 DK and nRF54L15 DK are provided in the boards folder.
   For information on how to connect and use these sensors see the TMP112 and DS18B20 samples in
   the `Zephyr Project <https://github.com/zephyrproject-rtos/zephyr>`_
 * A BTHome compatible listener, for example `Home Assistant <https://www.home-assistant.io/>`_ with the BTHome integration running.
@@ -46,7 +46,7 @@ To build for the nRF54L15 DK and the DS18B20 sensor run this west build command:
   
    west build -b nnrf54l15dk/nrf54l15/cpuapp -- -DCONFIG_SENSOR_DS18B20=y
 
-   and to build for the nRF54L15 DK and the TMP112 sensor run this west build command:
+and to build for the nRF54L15 DK and the TMP112 sensor run this west build command:
 
 .. code-block:: console
   

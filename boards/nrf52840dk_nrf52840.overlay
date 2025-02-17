@@ -1,10 +1,24 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- #include "serial_overlay.dtsi"
+ &arduino_serial {
+	status = "okay";
+
+	w1_0: w1-zephyr-serial-0 {
+		compatible = "zephyr,w1-serial";
+		status = "okay";
+
+		mysensor1 {
+			compatible = "maxim,ds18b20";
+			family-code = <0x28>;
+			resolution = <12>;
+			status = "okay";
+		};
+	};
+};
 
 &pinctrl {
 	uart1_default: uart1_default {
@@ -21,5 +35,9 @@
 };
  
 &i2c0 {
-	#include "tmp112.dtsi"
+	mysensor2@48 {
+		compatible = "ti,tmp112";
+		reg = <0x48>;
+		label = "TMP112";
+	};
 };

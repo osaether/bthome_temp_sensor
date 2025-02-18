@@ -10,7 +10,6 @@
 	w1_0: w1-zephyr-serial-0 {
 		compatible = "zephyr,w1-serial";
 		status = "okay";
-
 		mysensor1 {
 			compatible = "maxim,ds18b20";
 			family-code = <0x28>;

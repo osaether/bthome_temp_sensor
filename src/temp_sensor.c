@@ -11,6 +11,8 @@
 
 #if CONFIG_SENSOR_DS18B20
 #define SENSOR_DEVICE_NAME maxim_ds18b20
+#elif CONFIG_SENSOR_BME680
+#define SENSOR_DEVICE_NAME bosch_bme680
 #else
 #define SENSOR_DEVICE_NAME ti_tmp112
 #endif

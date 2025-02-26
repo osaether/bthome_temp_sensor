@@ -30,10 +30,10 @@ static int32_t temperature;
 static void thread_entry(void *p1, void *p2, void *p3)
 {
 	int ret;
-	struct sensor_value temp_value;
+	struct sensor_value sens_value;
 
 	const struct device *dev = (const struct device *)p1;
-	struct k_mutex *temp_mutex = (struct k_mutex *)p2;
+	struct k_mutex *sens_mutex = (struct k_mutex *)p2;
 	int32_t *temp = (int32_t *)p3;
 
 	while (1) {
@@ -43,15 +43,15 @@ static void thread_entry(void *p1, void *p2, void *p3)
 			return;
 		}
 
-		ret = sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &temp_value);
+		ret = sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &sens_value);
 		if (ret != 0) {
 			printk("sensor_channel_get failed ret %d\n", ret);
 			return;
 		}
-		if (k_mutex_lock(temp_mutex, K_MSEC(2000)) == 0) {
-			*temp = temp_value.val1 * 1E6 + temp_value.val2;
+		if (k_mutex_lock(sens_mutex, K_MSEC(2000)) == 0) {
+			*temp = sens_value.val1 * 1E6 + sens_value.val2;
 			*temp = (*temp + 5000)/10000.0;
-			k_mutex_unlock(temp_mutex);
+			k_mutex_unlock(sens_mutex);
 		} else {
 			printk("Unable to lock mutex\n");
 		}

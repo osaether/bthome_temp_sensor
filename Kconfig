@@ -17,6 +17,10 @@ menu "BTHome temperature sensor type"
 		bool "Maxim DS18B20"
 		select W1
 
+	config SENSOR_BME680
+		bool "Bosch BME680"
+		select I2C
+
 	endchoice
 
 endmenu

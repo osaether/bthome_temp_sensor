@@ -7,7 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/sensor.h>
-#include "temp_sensor.h"
+#include "sensor.h"
 
 #if CONFIG_SENSOR_DS18B20
 #define SENSOR_DEVICE_NAME maxim_ds18b20
@@ -25,16 +25,22 @@ K_THREAD_STACK_DEFINE(sensor_thread_stack, THREAD_STACKSIZE);
 static struct k_thread sensor_thread;
 K_MUTEX_DEFINE(sensor_mutex);
 
-static int32_t temperature;
+typedef struct
+{
+	int32_t temperature;
+	uint32_t humidity;
+} sensor_data_t;
+
+static sensor_data_t sensor_data;
 
 static void thread_entry(void *p1, void *p2, void *p3)
 {
 	int ret;
-	struct sensor_value temp_value;
+	struct sensor_value sens_value;
 
 	const struct device *dev = (const struct device *)p1;
-	struct k_mutex *temp_mutex = (struct k_mutex *)p2;
-	int32_t *temp = (int32_t *)p3;
+	struct k_mutex *sens_mutex = (struct k_mutex *)p2;
+	sensor_data_t *temp = (sensor_data_t *)p3;
 
 	while (1) {
 		ret = sensor_sample_fetch(dev);
@@ -43,23 +49,37 @@ static void thread_entry(void *p1, void *p2, void *p3)
 			return;
 		}
 
-		ret = sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &temp_value);
+		ret = sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &sens_value);
 		if (ret != 0) {
 			printk("sensor_channel_get failed ret %d\n", ret);
 			return;
 		}
-		if (k_mutex_lock(temp_mutex, K_MSEC(2000)) == 0) {
-			*temp = temp_value.val1 * 1E6 + temp_value.val2;
-			*temp = (*temp + 5000)/10000.0;
-			k_mutex_unlock(temp_mutex);
+		if (k_mutex_lock(sens_mutex, K_MSEC(2000)) == 0) {
+			temp->temperature = sens_value.val1 * 1E6 + sens_value.val2;
+			temp->temperature = (temp->temperature + 5000)/10000.0;
+			k_mutex_unlock(sens_mutex);
 		} else {
 			printk("Unable to lock mutex\n");
 		}
+#if CONFIG_SENSOR_BME680
+		ret = sensor_channel_get(dev, SENSOR_CHAN_HUMIDITY, &sens_value);
+		if (ret != 0) {
+			printk("sensor_channel_get failed ret %d\n", ret);
+			return;
+		}
+		if (k_mutex_lock(sens_mutex, K_MSEC(2000)) == 0) {
+			temp->humidity = sens_value.val1 * 1E6 + sens_value.val2;
+			temp->humidity = (temp->humidity + 5000)/10000.0;
+			k_mutex_unlock(sens_mutex);
+		} else {
+			printk("Unable to lock mutex\n");
+		}
+#endif
 		k_sleep(K_MSEC(2000));
 	}
 }
 
-void temp_init(void)
+void sensor_init(void)
 {
 	const struct device *dev = DEVICE_DT_GET_ANY(SENSOR_DEVICE_NAME);
 
@@ -69,17 +89,29 @@ void temp_init(void)
 
 	k_thread_create(&sensor_thread, sensor_thread_stack,
 			K_THREAD_STACK_SIZEOF(sensor_thread_stack),
-			thread_entry, (void *)dev, (void *)&sensor_mutex, (void*)&temperature,
+			thread_entry, (void *)dev, (void *)&sensor_mutex, (void*)&sensor_data,
 			THREAD_PRIORITY, 0, K_FOREVER);
 	k_thread_start(&sensor_thread);
 }
 
-int32_t temp_get(void)
+int32_t temperature_get(void)
 {
 	int32_t temp = 0;
 
 	if (k_mutex_lock(&sensor_mutex, K_MSEC(100)) == 0) {
-		temp = temperature;
+		temp = sensor_data.temperature;
+		k_mutex_unlock(&sensor_mutex);
+	}
+
+	return temp;
+}
+
+uint32_t humidity_get(void)
+{
+	uint32_t temp = 0;
+
+	if (k_mutex_lock(&sensor_mutex, K_MSEC(100)) == 0) {
+		temp = sensor_data.humidity;
 		k_mutex_unlock(&sensor_mutex);
 	}
 

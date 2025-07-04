@@ -56,7 +56,7 @@ static void thread_entry(void *p1, void *p2, void *p3)
 		}
 		if (k_mutex_lock(sens_mutex, K_MSEC(2000)) == 0) {
 			temp->temperature = sens_value.val1 * 1E6 + sens_value.val2;
-			temp->temperature = (temp->temperature + 5000)/10000.0;
+			temp->temperature = (temp->temperature + 5000)/10000;
 			k_mutex_unlock(sens_mutex);
 		} else {
 			printk("Unable to lock mutex\n");
@@ -69,7 +69,7 @@ static void thread_entry(void *p1, void *p2, void *p3)
 		}
 		if (k_mutex_lock(sens_mutex, K_MSEC(2000)) == 0) {
 			temp->humidity = sens_value.val1 * 1E6 + sens_value.val2;
-			temp->humidity = (temp->humidity + 5000)/10000.0;
+			temp->humidity = (temp->humidity + 5000)/10000;
 			k_mutex_unlock(sens_mutex);
 		} else {
 			printk("Unable to lock mutex\n");
@@ -116,4 +116,10 @@ uint32_t humidity_get(void)
 	}
 
 	return temp;
+}
+
+uint32_t pressure_get(void)
+{
+	/* Pressure is not supported by the current sensor implementations */
+	return 0;
 }

@@ -88,11 +88,13 @@ int main(void)
 
 	for (;;) {
 		temperature = temperature_get();
-		humidity = humidity_get();
 		service_data[IDX_TEMPL] = (uint8_t)((uint32_t)temperature & 0xff);
 		service_data[IDX_TEMPH] = (uint8_t)(((uint32_t)temperature >> 8) & 0xff);
+#ifdef CONFIG_SENSOR_BME680
+		humidity = humidity_get();
 		service_data[IDX_HUMIL] = (uint8_t)((uint32_t)humidity & 0xff);
 		service_data[IDX_HUMIH] = (uint8_t)(((uint32_t)humidity >> 8) & 0xff);
+#endif
 
 		err = bt_le_adv_update_data(ad, ARRAY_SIZE(ad), NULL, 0);
 		if (err) {

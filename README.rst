@@ -238,9 +238,5 @@ Project Structure
    ├── prj.conf                 # Project configuration
    └── README.rst              # This file
 
-License
-*******
-
-This project is licensed under the Apache License 2.0. See the source files for full license information.
 
 For more information about BTHome format, visit https://bthome.io

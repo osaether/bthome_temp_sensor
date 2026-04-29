@@ -17,9 +17,13 @@
 #define IDX_HUMIL               7       /* Index of lo byte of humidity in service data */
 #define IDX_HUMIH               8       /* Index of hi byte of humidity in service data */
 
-#define ADV_PARAM BT_LE_ADV_PARAM(BT_LE_ADV_OPT_USE_IDENTITY, \
-				  BT_GAP_ADV_SLOW_INT_MIN, \
-				  BT_GAP_ADV_SLOW_INT_MAX, NULL)
+static const struct bt_le_adv_param adv_param =
+	BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_USE_IDENTITY | BT_LE_ADV_OPT_EXT_ADV,
+			     BT_GAP_ADV_SLOW_INT_MIN,
+			     BT_GAP_ADV_SLOW_INT_MAX,
+			     NULL);
+
+static struct bt_le_ext_adv *ext_adv;
 
 static uint8_t service_data[] = {
 	BT_UUID_16_ENCODE(BTHOME_SERVICE_UUID),
@@ -49,8 +53,19 @@ static void bt_ready(int err)
 
 	printk("Bluetooth initialized\n");
 
-	/* Start advertising */
-	err = bt_le_adv_start(ADV_PARAM, ad, ARRAY_SIZE(ad), NULL, 0);
+	err = bt_le_ext_adv_create(&adv_param, NULL, &ext_adv);
+	if (err) {
+		printk("Failed to create advertiser (err %d)\n", err);
+		return;
+	}
+
+	err = bt_le_ext_adv_set_data(ext_adv, ad, ARRAY_SIZE(ad), NULL, 0);
+	if (err) {
+		printk("Failed to set advertising data (err %d)\n", err);
+		return;
+	}
+
+	err = bt_le_ext_adv_start(ext_adv, BT_LE_EXT_ADV_START_DEFAULT);
 	if (err) {
 		printk("Advertising failed to start (err %d)\n", err);
 		return;
@@ -96,10 +111,12 @@ int main(void)
 		service_data[IDX_HUMIH] = (uint8_t)(((uint32_t)humidity >> 8) & 0xff);
 #endif
 
-		err = bt_le_adv_update_data(ad, ARRAY_SIZE(ad), NULL, 0);
-		if (err) {
-			printk("Failed to update advertising data (err %d)\n", err);
-			return 0;
+		if (ext_adv) {
+			err = bt_le_ext_adv_set_data(ext_adv, ad, ARRAY_SIZE(ad), NULL, 0);
+			if (err) {
+				printk("Failed to update advertising data (err %d)\n", err);
+				return 0;
+			}
 		}
 		k_sleep(K_MSEC(BT_GAP_ADV_SLOW_INT_MIN));
 	}

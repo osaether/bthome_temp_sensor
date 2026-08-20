@@ -1,23 +1,61 @@
 BTHome Temperature Sensor
 #########################
 
+|license|
+
+A BTHome v2 Bluetooth Low Energy temperature and humidity sensor for Nordic
+nRF52840 and nRF54L15 development kits, built with the `nRF Connect SDK`_ and
+`Zephyr`_. It supports TMP112, DS18B20 and BME680 sensors and is automatically
+discoverable by `Home Assistant`_.
+
 Overview
 ********
 
-This application implements a Bluetooth Low Energy (BLE) temperature sensor using the `BTHome <https://bthome.io>`_ format for data advertisement. BTHome is an energy-efficient format for transmitting sensor data over Bluetooth LE, compatible with popular home automation platforms like `Home Assistant <https://www.home-assistant.io/>`_.
+This Zephyr application broadcasts measurements as unencrypted `BTHome v2`_
+service data. BTHome is an energy-efficient Bluetooth Low Energy (BLE)
+advertising format supported by home automation platforms such as Home
+Assistant. No BLE pairing or connection is required.
 
-The application supports three different temperature sensors:
+Supported hardware
+==================
 
-* **Texas Instruments TMP112** - I2C digital temperature sensor (default)
-* **Maxim DS18B20** - 1-Wire digital temperature sensor
-* **Bosch BME680** - I2C environmental sensor (temperature + humidity)
+========================  =============  ========================
+Sensor                    Interface      Measurements
+========================  =============  ========================
+Texas Instruments TMP112  I2C            Temperature (default)
+Maxim DS18B20             1-Wire         Temperature
+Bosch BME680              I2C            Temperature and humidity
+========================  =============  ========================
+
+All three sensor configurations support the Nordic nRF52840 DK and nRF54L15
+DK.
 
 Key features:
 
-* Advertises temperature data every ~1 second using BTHome format
+* Advertises measurements using the BTHome v2 format
+* Works with Home Assistant's automatic BTHome discovery
 * Low power consumption suitable for battery-powered applications
-* Supports both nRF52840 DK and nRF54L15 DK development boards
-* Configurable sensor selection through Kconfig
+* Selects the attached sensor through Zephyr Kconfig
+
+Quick Start
+***********
+
+After installing the nRF Connect SDK, clone this repository into the SDK
+workspace and build the default TMP112 configuration:
+
+.. code-block:: console
+
+   west build -b nrf52840dk/nrf52840
+   west flash
+
+Choose another supported sensor by adding one of the following CMake options
+to the build command:
+
+* ``-- -DCONFIG_SENSOR_DS18B20=y``
+* ``-- -DCONFIG_SENSOR_BME680=y``
+
+See `Building`_ for every board and sensor combination. Review
+`Sensor Connections`_ before powering the hardware.
 
 Prerequisites
 *************
@@ -27,7 +65,7 @@ Hardware Requirements
 
 * Nordic nRF52840 DK or nRF54L15 DK development board
 * One of the supported temperature sensors:
-  
+
   * TMP112 (I2C address 0x48)
   * DS18B20 (1-Wire)
   * BME680 (I2C address 0x76)
@@ -38,7 +76,7 @@ Hardware Requirements
 Software Requirements
 =====================
 
-* `nRF Connect SDK <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html>`_ v2.4.0 or later
+* `nRF Connect SDK`_ v2.4.0 or later
 * West build tool
 * nRF Connect for Desktop (for board configuration and flashing)
 
@@ -51,7 +89,7 @@ TMP112 (I2C)
 Connect to nRF52840 DK:
 
 * VCC → 3.3V
-* GND → GND  
+* GND → GND
 * SDA → P0.26 (Arduino A4)
 * SCL → P0.27 (Arduino A5)
 
@@ -138,7 +176,7 @@ Special Note for nRF54L15 DK
 Before flashing firmware to the nRF54L15 DK:
 
 1. Use the `Board Configurator <https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html>`_
-2. Disable VCOM0 
+2. Disable VCOM0
 3. Set VDD to 3.3V
 4. Apply the configuration before flashing
 
@@ -189,7 +227,7 @@ Troubleshooting
 ***************
 
 Device Not Advertising
-=======================
+======================
 
 * Check that the sensor is properly connected and powered
 * Verify the correct sensor configuration is selected
@@ -205,7 +243,7 @@ Sensor Reading Issues
 * Verify sensor address matches overlay configuration
 
 Home Assistant Not Discovering
-===============================
+==============================
 
 * Ensure BTHome integration is installed
 * Check Bluetooth adapter range and interference
@@ -213,7 +251,7 @@ Home Assistant Not Discovering
 * Check HA logs for BTHome-related errors
 
 Build Errors
-=============
+============
 
 * Ensure nRF Connect SDK is properly installed
 * Check that you're in the correct directory
@@ -234,9 +272,38 @@ Project Structure
    │   ├── main.c                # Main application and BLE advertising
    │   └── sensor.c              # Sensor initialization and reading
    ├── CMakeLists.txt           # Build configuration
+   ├── CONTRIBUTING.md          # Contribution guidelines
    ├── Kconfig                  # Configuration options
+   ├── LICENSE                  # Apache 2.0 license (default)
+   ├── LICENSES/
+   │   └── LicenseRef-Nordic-5-Clause.txt  # Nordic board overlay license
    ├── prj.conf                 # Project configuration
    └── README.rst              # This file
 
+Contributing
+************
+
+Bug reports, documentation improvements and support for additional Zephyr
+boards or sensor drivers are welcome. See `CONTRIBUTING.md`_ for the expected
+workflow and validation checklist.
+
+License
+*******
+
+Except where otherwise noted, this project is licensed under the
+`Apache License 2.0`_. The files in ``boards/`` are licensed under the
+`Nordic Semiconductor 5-Clause License`_, as indicated by their SPDX license
+identifiers.
+
+.. _nRF Connect SDK: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
+.. _Zephyr: https://www.zephyrproject.org/
+.. _Home Assistant: https://www.home-assistant.io/integrations/bthome/
+.. _BTHome v2: https://bthome.io/format/
+.. _CONTRIBUTING.md: CONTRIBUTING.md
+.. _Apache License 2.0: LICENSE
+.. _Nordic Semiconductor 5-Clause License: LICENSES/LicenseRef-Nordic-5-Clause.txt
+.. |license| image:: https://img.shields.io/badge/license-mixed-blue.svg
+   :target: #license
+   :alt: Mixed licenses
 
 For more information about BTHome format, visit https://bthome.io
